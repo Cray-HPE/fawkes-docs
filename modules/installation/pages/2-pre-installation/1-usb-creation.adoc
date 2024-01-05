@@ -27,7 +27,7 @@ Fawkes is only available from a private mirror at this time.
 
 Using the private mirror requires credentials to https://artifactory.algol60.net. For information on obtaining these, see link:https://app.tango.us/app/workflow/Downloading-from-Private-Repos-in-Artifactory-eb4f579cdf9a4ea8988e402a18008b7b[this guide].
 
-. Set Credentials
+. Set Credentials.
 * Username and token (see link:https://app.tango.us/app/workflow/Downloading-from-Private-Repos-in-Artifactory-eb4f579cdf9a4ea8988e402a18008b7b[this guide] for assistance).
 +
 [source,bash]
@@ -46,7 +46,7 @@ read -s ARTIFACTORY_TOKEN
 ----
 RELEASE=0.0.1-alpha.3
 ----
-* The latest release from stable or unstable
+* The latest release from stable or unstable.
 +
 NOTE: At this time, Fawkes is still in a pre-release state and the stable stream is empty.
 +
@@ -55,7 +55,7 @@ NOTE: At this time, Fawkes is still in a pre-release state and the stable stream
 STREAM=unstable
 RELEASE="$(curl -u "${ARTIFACTORY_USER}":"${ARTIFACTORY_TOKEN}" "https://artifactory.algol60.net/artifactory/api/search/latestVersion?g=${STREAM}&a=fawkes")"
 ----
-. Download the tarball
+. Download the tarball.
 +
 NOTE: To use a proxy, add `--proxy http://example.com:443` to each `curl` call.
 +
@@ -99,9 +99,10 @@ The following steps will create a USB from a Linux OS.
 ----
 tar --wildcards -xzvf ./fawkes-${RELEASE}.tar.gz \
     "*/images/" \
-    "*/rpm/"
+    "*/rpm/" \
+    "*/security/"
 ----
-. Validate the image's SHA sums
+. Validate the image's SHA sums.
 +
 [source,bash]
 ----
@@ -117,11 +118,16 @@ All the images should return with `OK`. If any fail, please stop and open a bug 
 +
 NOTE: `crucible` is undergoing source code changes and will have packages for `yum` and `debian` package managers in the near future.
 +
-* SUSE
+* YUM RPM (SUSE/RedHat)
 +
 [source,bash]
 ----
-zypper --plus-repo "fawkes-${RELEASE}/rpm/sle-$(awk -F= '/VERSION=/{gsub(/["-]/, "") ; print tolower($NF)}' /etc/os-release)" in -n crucible
+rpm --import "fawkes-${RELEASE}/security/hpe-signing-key.asc"
+crucible --version
+sudo mv /etc/zypp/repos.d{,.bak}
+sudo zypper --plus-repo "fawkes-${RELEASE}/rpm/sle-$(awk -F= '/VERSION=/{gsub(/["-]/, "") ; print tolower($NF)}' /etc/os-release)" in --details -n crucible
+sudo mv /etc/zypp/repos.d{.bak,}
+crucible --version
 ----
 . Find the desired USB drive.
 +
@@ -133,7 +139,13 @@ NOTE: The target device does not need to be wiped.
 ----
 lsblk -b -l -d -o SIZE,NAME,TYPE,SUBSYSTEMS | grep usb
 ----
-* Set the USB device to a variable.
++
+Example output:
++
+....
+256641603584 sdd   disk block:scsi:usb:pci
+....
+. Set the USB device to a variable.
 ** Device mapper path.
 +
 [source,bash]

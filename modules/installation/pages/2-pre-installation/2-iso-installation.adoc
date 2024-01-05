@@ -77,7 +77,7 @@ crucible network interface --dhcp lan0
 ----
 - Using a static IP
 +
-NOTE: Optionally set a DNS server by appending `--dns <server IP>`, additional servers may be specified using a comma delimited list (e.g. `--dns <server IP N>,<server IP N+1>`) .
+NOTE: Optionally set a DNS server by appending `--dns <server IP>`, additional servers may be specified using a comma delimited list (e.g. `--dns <server IP N>,<server IP N+1>`) . For more examples with Crucible, see xref:crucible::nic-interfaces-setup-reference.adoc[].
 +
 [source,bash,line-comment=%]
 ----
